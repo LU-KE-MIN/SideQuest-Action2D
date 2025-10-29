@@ -1,0 +1,16 @@
+{
+    "name": "Game.Skills.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:96eae75300a233d49805fa610df44a80"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

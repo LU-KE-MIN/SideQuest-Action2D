@@ -1,0 +1,23 @@
+{
+    "name": "Game.Skills",
+    "rootNamespace": "",
+    "references": [
+        "GUID:81e2d54a1f030584287f60332fe0afb5",
+        "GUID:4f41e6f6b15a8c346a61fe5fbfd6245a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Select...",
+            "expression": "",
+            "define": ""
+        }
+    ],
+    "noEngineReferences": false
+}
