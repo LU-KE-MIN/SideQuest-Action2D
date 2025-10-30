@@ -73,6 +73,7 @@ public static class SkillParameterKeys
     public const string Duration = "duration";
     public const string CooldownReduction = "cooldownReduction";
     public const string ManaCost = "manaCost";
+    public const string ManaCostReduction = "manaCostReduction";
     public const string LifeSteal = "lifeSteal";
     public const string CritChance = "critChance";
     public const string CritDamage = "critDamage";

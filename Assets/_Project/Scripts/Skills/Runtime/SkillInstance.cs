@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 [Serializable]
@@ -107,5 +107,45 @@ public class SkillInstance
             parametersNeedUpdate = true;
             SkillEvents.TriggerSkillUnlocked(this);
         }
+    }
+    public bool CanCast(GameObject caster)
+    {
+        Debug.Log($"[SkillInstance] CanCast 檢查，IsUnlocked:{IsUnlocked}, IsReady:{IsReady}");
+        if (!IsUnlocked) return false;
+        if (!IsReady) return false;
+
+        var resourceProvider = caster.GetComponent<IResourceProvider>();
+        if (resourceProvider == null) return false;
+
+        float manaCost = GetManaCost();
+        return resourceProvider.CanAfford(manaCost);
+    }
+
+    public float GetManaCost()
+    {
+        var parameters = GetParameters();
+        float costReduction = parameters.Get(SkillParameterKeys.ManaCostReduction, 0f);
+        return definition.baseManaCost * (1f - costReduction);
+    }
+
+    public bool TryCast(GameObject caster, float cooldownModifier = 1f, float globalCooldown = 0.5f)
+    {
+        Debug.Log($"[SkillInstance] TryCast 被調用，技能: {definition?.skillId}"); 
+        if (!CanCast(caster)) return false;
+
+        var resourceProvider = caster.GetComponent<IResourceProvider>();
+        float manaCost = GetManaCost();
+
+        // 消耗魔力
+        if (!resourceProvider.TryConsume(manaCost)) return false;
+
+        // 啟動冷卻
+        StartCooldown(cooldownModifier, globalCooldown);
+
+        // 使用現有的 OnSkillActivated 事件
+        var context = new SkillContext { caster = caster };
+        SkillEvents.TriggerSkillActivated(this, context);
+
+        return true;
     }
 }
