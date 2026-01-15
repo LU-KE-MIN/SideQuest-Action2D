@@ -1,126 +1,75 @@
-# SideQuest-Action2D（WIP）  
-Unity 製 2D アクションRPGプロトタイプ
+# SideQuest-Action2D | Unity C# Architecture Study Project
 
-## 🧩 概要
+![Unity](https://img.shields.io/badge/Unity-6000.2.9f1-black?logo=unity)
+![C#](https://img.shields.io/badge/Language-C%23-239120?logo=c-sharp&logoColor=white)
+![Architecture](https://img.shields.io/badge/Architecture-Modular%20%2F%20Asmdef-blueviolet)
 
-SideQuest-Action2D は、Unity を使用して開発中の 2D アクションRPGプロトタイプです。  
-スキルシステム、ステータス管理、Projectile（弾丸）メカニクスなど、  
-**モジュール性と拡張性の高いコード設計**を目的とした実験的プロジェクトです。
+## 📖 Project Overview / プロジェクト概要
 
-日本のゲーム業界へのキャリア転換を目的とした個人ポートフォリオとして制作しており、  
-採用担当者・開発チームに「設計の考え方」が伝わる構成を意識しています。
+**「大規模開発に耐えうる、保守性の高いUnity設計」を検証するための技術デモプロジェクトです。**
 
-> ※本プロジェクトは現在も開発中のプロトタイプ（WIP）です。
+本プロジェクトは、単にゲームを作ることを目的とせず、私がバックエンドエンジニアとして培った**「疎結合（Loose Coupling）」**や**「責務の分離（Separation of Concerns）」**といった設計思想を、Unityのクライアント開発に適用する実験（Proof of Concept）として開発しています。
 
----
-
-## ⚙️ 主な機能
-
-### ✅ 実装済み
-
-- **モジュラー式スキルシステム**
-  - `SkillInventory` と `SkillActivator` により、スキルの所持・発動を分離
-  - ランタイムでスキル設定を切り替え可能な設計
-
-- **経験値 & レベルアップシステム**
-  - `PlayerStats` でレベル、経験値、ステータス（攻撃力など）を一元管理
-  - レベルカーブとスキルポイント付与の仕組みを実装中
-
-- **Projectile（弾丸）発射システム（2D）**
-  - シンプルな 2D Projectile の発射／ヒット判定
-  - ヒット時にダメージ計算を行うコンバット処理
-
-- **Asmdef によるレイヤー分割**
-  - `Game.Core`：共通ユーティリティ／基盤コード
-  - `Game.Combat`：戦闘・ダメージ・Projectile 関連ロジック
-  - `Game.Skills`：スキル／アビリティ関連ロジック
-  - 依存関係を明確化し、モジュールごとに責務を分離
-
-- **旧 Input システム対応**
-  - `Input.GetKeyDown()` を用いた暫定的な入力処理
-  - 将来的な新 Input System への移行を想定した構造
-
-### 🛠 開発予定（ToDo）
-
-- Projectile システムの拡張
-  - 複数のダメージタイプ（火・氷・物理など）への対応
-  - 範囲攻撃・貫通弾・爆発エフェクトなどの追加
-
-- 新 Input System への移行
-  - アクションマッピングを用いた柔軟な入力設定
-
-- UI・エフェクト・アニメーション
-  - ステータス表示UI、スキルクールダウン表示
-  - 攻撃・被弾・レベルアップ時の演出
-
-- 敵 AI・ウェーブ制バトルの追加
-  - シンプルな AI（追跡・攻撃パターン）実装
-  - 小規模なバトルループを通したゲーム性検証
+**⚠️ Note:** 本リポジトリはアーキテクチャ検証用であり、ゲームプレイループは開発途中です。ソースコードの構成（Assembly Definition による依存関係の整理など）を中心にご覧ください。
 
 ---
 
-## 🧠 技術構成
+## ⚙️ Technical Highlights / 技術的なこだわり
 
-- **エンジン**：Unity 6000.2.9f1
-- **言語**：C#
-- **バージョン管理**：Git（＋必要に応じて Git LFS）
-- **対象プラットフォーム**：PC（Standalone）／WebGL（予定）
+ゲーム業界でのチーム開発を意識し、スパゲッティコードを防ぐための以下の設計を実践しています。
+
+### 1. Assembly Definition (Asmdef) によるレイヤー分割
+コンパイル時間の短縮と、循環参照の防止を目的として、機能を明確にモジュール化しています。
+
+| Module | Namespace | Responsibility |
+| :--- | :--- | :--- |
+| **Game.Core** | `Core` | 共通ユーティリティ、定数、基盤システム（特定のゲームロジックに依存しない） |
+| **Game.Combat** | `Combat` | ダメージ計算、Projectile（弾丸）の挙動、ヒット判定 |
+| **Game.Skills** | `Skills` | スキルデータの定義、発動ロジック、インベントリ管理 |
+
+### 2. モジュラー式スキルシステム (Scalability)
+* `ScriptableObject` を活用し、データ（パラメータ）とロジック（振る舞い）を分離。
+* `SkillInventory` と `SkillActivator` に責務を分けることで、将来的に新しいスキルタイプを追加しても既存コードへの影響を最小限に抑える設計です。
+
+### 3. ステータス管理の一元化
+* `PlayerStats` クラスにてレベル、経験値、攻撃力などを管理。
+* イベント駆動（C# Events）により、ステータスの変化をUIや他のシステムに通知する仕組みを想定しています。
 
 ---
 
-## 🗂 プロジェクト構造（抜粋）
+## 🗂 Project Structure / ディレクトリ構成
 
 ```text
 Assets/
  ┣ _Project/
  ┃  ┣ Scripts/
- ┃  ┃  ┣ Core/
- ┃  ┃  ┣ Combat/
- ┃  ┃  ┗ Skills/
- ┃  ┣ Scenes/
- ┃  ┣ Art/
- ┃  ┗ Audio/
- ┗ External/
-👤 担当範囲
+ ┃  ┃  ┣ Core/        # 汎用基盤 (Logger, Extensions)
+ ┃  ┃  ┣ Combat/      # 戦闘ロジック (Damage calc, Hitbox)
+ ┃  ┃  ┗ Skills/      # スキルシステム (SO definitions)
+ ┃  ┣ Scenes/         # 検証用シーン
+ ┃  ┗ Art/            # アセット素材
+ ┗ External/          # 外部ライブラリ
 
-本プロジェクトは、個人による単独開発です。
+🛠 Future Roadmap / 今後の実装予定
+現在はアーキテクチャの基盤構築が完了しており、今後は以下の実装を通じて「新技術のキャッチアップ」を進める予定です。
 
-ゲームコンセプト・システム仕様の検討
+[ ] New Input Systemへの移行: Input.GetKeyDown からのアクションマッピングへの変更
 
-アーキテクチャ設計（Asmdef 分割、責務分離）
+[ ] Projectileシステムの拡張: オブジェクトプールを活用したメモリ管理の最適化
 
-C# を用いたゲームロジック全般の実装
+[ ] 敵AIの実装: ステートパターンを用いた行動ロジックの構築
 
-Unity Editor 上でのデバッグ／調整
+🧑‍💻 Motivation / 開発の背景
+「Enterprise C# Quality in Game Development」
 
-Git を用いたバージョン管理
+金融・業務システムのサーバーサイド開発で求められる**「堅牢性」や「可読性」**は、複雑化する近年のゲーム開発においても不可欠です。 私は本プロジェクトを通じて、C#の強みを最大限に活かした「壊れにくく、拡張しやすい」ゲーム設計の実践を目指しています。
 
-🧑‍💻 開発の目的
+👤 Author
+LU-KE-MIN
 
-日本のゲーム業界（特にアクションゲーム開発）へのキャリア転換を目指したポートフォリオ
+Backend Engineer aiming for Game Server / Client Architecture roles.
 
-「モジュール性」「読みやすさ」「拡張しやすさ」を意識したコード設計の実践
+Skills: C# (.NET), SQL Server, Unity, Git.
 
-実務でのサーバーサイド開発経験（C#／Webアプリ）を、
-ゲーム開発の設計・実装にも活かすことを意図
-
-📷 プレビュー（近日追加予定）
-
-スキルシステムとバトルループの実装が安定次第、
-以下のようなメディアを追加予定です。
-
-ゲーム画面のスクリーンショット
-
-スキル発動・Projectile 攻撃の GIF アニメーション
-
-必要に応じて、システム構成図・クラス図 等
-
-📜 ライセンス
-
-現時点ではライセンス未設定（個人ポートフォリオ用）です。
-
-コードの閲覧・参考：可
-
-無断での再配布・再利用：不可
-
-※今後の公開範囲やライセンス方針は、開発状況に応じて見直す可能性があります。
+📜 License
+Personal Portfolio (Source code viewing is allowed for recruitment purposes).
